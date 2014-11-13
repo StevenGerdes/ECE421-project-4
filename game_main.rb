@@ -1,0 +1,2 @@
+class GameMain
+end
