@@ -39,6 +39,7 @@ class GameState
     #invariant
     invariant
 
+    result = nil
     #postcondition
     if result > @rows ||
         result < 0 ||
