@@ -2,6 +2,12 @@ class GameState
   attr_reader rows, columns, last_played
 
   def initialize(rows, columns)
+    #precondition
+    unless (rows.respond_to? :to_i && rows.to_i > 0) ||
+        (columns.respond_to? :to_i && columns.to_i > 0)
+      raise PreconditionError
+    end
+
     @rows = rows
     @columns = columns
     @board = Array.new(rows)
