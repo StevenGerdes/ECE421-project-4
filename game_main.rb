@@ -11,6 +11,10 @@ class GameMain
 
   end
 
+  def on_right_click
+
+  end
+
   def end_game(winner)
 
   end
