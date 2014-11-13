@@ -12,11 +12,6 @@ class WinConditionChecker
       raise PreconditionError;
     end
 
-
-
-    #postcondition
-    #nothing
-
     #invariant
     if original_state != game_state
       raise InvarientError;
