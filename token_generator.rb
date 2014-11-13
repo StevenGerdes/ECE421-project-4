@@ -11,8 +11,6 @@ class TokenGenerator
     #postcondition
     unless
         token.respond_to?( :color )  &&
-        token.respond_to?( :column ) &&
-        token.respond_to?( :row )   &&
         token.respond_to?( :selected? ) &&
         token.respond_to?( :value )
       raise PostconditionError
