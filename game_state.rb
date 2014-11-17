@@ -1,38 +1,39 @@
 class GameState
   attr_reader rows, columns, last_played
 
-  def initialize(rows, columns)
+  def initialize(rows, columns, win_cond_checker)
     #precondition
     unless (rows.respond_to? :to_i && rows.to_i > 0) ||
-        (columns.respond_to? :to_i && columns.to_i > 0)
+        (columns.respond_to? :to_i && columns.to_i > 0) ||
+        win_cond_checker.is_a?(WinConditionChecker)
       raise PreconditionError
     end
 
     @rows = rows.to_i
     @columns = columns.to_i
     @board = Hash.new(nil)
+    @win_condition_checker = win_cond_checker
   end
 
-  def play(token, row, column)
+  #Sets a token to the specified coordinate
+  def play(token, coordinate)
     #invariant
     invariant
 
     #precondition
-    if (row.respond_to? :to_i && row.to_i >= @rows && row.to_i < 0) ||
-        (column.respond_to? :to_i && column.to_i >= @columns && column.to_i < 0) ||
+    if (!coordinate.is_a? Coordinate) ||
+        (coordinate.row >= @rows && coordinate.row < 0) ||
+        (coordinate.column >= @columns && coordinate.column < 0) ||
         token.is_a?(Token) ||
         @board.include?(token)
       raise PreconditionError
     end
 
-    loc_row = row.to_i
-    loc_column = column.to_i
-
-    if column_full? loc_column
+    if column_full? coordinate.column
       result = false
     else
-      @board[row, loc_column] = token
-      @last_played = Coordinate.new(loc_row, loc_column)
+      @board[coordinate.row, coordinate.column] = token
+      @last_played = Coordinate.new(coordinate.row, coordinate.column)
       result = true
     end
 
@@ -47,20 +48,22 @@ class GameState
     return result
   end
 
-  def remove(row, column)
+  # Remove token from board at coordinates
+  def remove(coordinate)
     #invariant
     invariant
 
     #precondition
-    if (row.respond_to? :to_i && row.to_i >= @rows && row.to_i < 0) ||
-        (column.respond_to? :to_i && column.to_i >= @columns && column.to_i < 0)
+    if !(coordinate.is_a? Coordinate) ||
+        (coordinate.row >= @rows && coordinate.row < 0) ||
+        (coordinate.column >= @columns && coordinate.column < 0)
       raise PreconditionError
     end
 
-    @board[row.to_i, column.to_i] = nil
+    @board[coordinate.row, coordinate.column] = nil
 
     #postcondition
-    if @board[row, column] != nil
+    if @board[coordinate.row, coordinate.column] != nil
       raise PostconditionError
     end
 
@@ -68,6 +71,7 @@ class GameState
     invariant
   end
 
+  # Get the highest row that contains a token in the supplied column
   def height(column)
     #invariant
     invariant
@@ -93,6 +97,10 @@ class GameState
     return result
   end
 
+  def reset
+
+  end
+
   private
   def invariant
     if @rows < 0 ||
@@ -109,10 +117,18 @@ class GameState
   end
 end
 
+#Class to keep track of token coordinates
 class Coordinate
   attr_reader row, column
+
   def initialize(row, column)
-    @row = row
-    @column = column
+    #precondition
+    unless (row.respond_to? :to_i && row.to_i > 0) ||
+        (column.respond_to? :to_i && column.to_i > 0)
+      raise PreconditionError
+    end
+
+    @row = row.to_i
+    @column = column.to_i
   end
 end
