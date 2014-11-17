@@ -2,8 +2,8 @@ require './contract_exceptions'
 
 class ConnectGameFactory
 
-  def initialize
-
+  def initialize( players, type )
+    @player_count = players
   end
 
   def player_token_generator(player_num)
@@ -33,4 +33,9 @@ class ConnectGameFactory
       raise PostconditionError
     end
   end
+
+  def player_win_condition_checkers
+    0..@player_count.map { |player| player_win_condition_checker(player) }
+  end
+
 end
