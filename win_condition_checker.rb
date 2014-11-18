@@ -7,14 +7,16 @@ class WinConditionChecker
 
   method_contract(
       #preconditions
-      [lambda { | obj, game_state| game_state.respond_to?(:get_rows) },
-       lambda { | obj, game_state| game_state.respond_to?(:get_cols) },
+      [lambda { | obj, game_state| game_state.respond_to?(:row) },
+       lambda { | obj, game_state| game_state.respond_to?(:column) },
+       lambda { | obj, game_state| game_state.respond_to?(:left_diagonal) },
+       lambda { | obj, game_state| game_state.respond_to?(:right_diagonal) },
        lambda { | obj, game_state| game_state.respond_to?(:last_played) }],
       #postconditions
       [lambda { | obj, result, game_state| result.is_a?(TrueClass)|| result.is_a?( FalseClass)}])
 
   def check_win(game_state)
-    last_token = game_state.at(game_state.last_played)
+    last_token = game_state.get_token(game_state.last_played)
     return four_in_row(game_state.row(game_state.last_played.row), last_token.value) ||
         four_in_row(game_state.column(game_state.last_played.column), last_token.value) ||
         four_in_row(game_state.left_diagonal(game_state.last_played), last_token.value) ||

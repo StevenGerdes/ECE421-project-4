@@ -1,20 +1,26 @@
 require './contract'
+require './token'
 
 class TokenGenerator
   include Contract
 
   class_invariant([])
 
+  def initialize( color, value )
+    @color = color
+    @value = value
+  end
+
   method_contract(
       #preconditions
-      [lambda { |obj, result| result.respond_to?(:color) },
-       lambda { |obj, result| result.respond_to?(:selected?) },
-       lambda { |obj, result| result.respond_to?(:value) }],
+      [],
       #postconditions
-      [])
+      [lambda { |obj, result| result.respond_to?(:color) },
+       lambda { |obj, result| result.respond_to?(:selected) },
+       lambda { |obj, result| result.respond_to?(:value) }])
 
   def get_token
-    token = nil
+    return Token.new(@value, @color)
   end
 
 end

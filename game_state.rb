@@ -2,7 +2,7 @@ require './contract'
 
 class GameState
   include Contract
-  attr_reader :rows, :columns, :last_played, :player_turn, :on_change
+  attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board
 
   class_invariant([lambda { |obj| obj.rows > 0 },
                    lambda { |obj| obj.columns > 0 }])
@@ -37,12 +37,12 @@ class GameState
   method_contract(
       #preconditions
       [lambda { |obj, token, coordinate| coordinate.is_a? Coordinate },
-       lambda { |obj, token, coordinate| coordinate.row < @rows && coordinate.row >= 0 },
-       lambda { |obj, token, coordinate| coordinate.column < @columns && coordinate.column >= 0 },
+       lambda { |obj, token, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
+       lambda { |obj, token, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 },
        lambda { |obj, token, coordinate| token.is_a?(Token) },
-       lambda { |obj, token, coordinate| !@board.include?(token) }],
+       lambda { |obj, token, coordinate| !obj.board.include?(token) }],
       #postconditions
-      [lambda { |obj, result, token, coordinate| @board.include?(token) }])
+      [lambda { |obj, result, token, coordinate| obj.board.values.include?(token) }])
   #Sets a token to the specified coordinate
   def play(token, coordinate)
 
@@ -62,8 +62,8 @@ class GameState
   method_contract(
       #preconditions
       [lambda { |obj, coordinate| coordinate.is_a? Coordinate },
-       lambda { |obj, coordinate| coordinate.row < @rows && coordinate.row >= 0 },
-       lambda { |obj, coordinate| coordinate.column < @rows && coordinate.column >= 0 }],
+       lambda { |obj, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
+       lambda { |obj, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 }],
       #postconditions
       [lambda { |obj, result, coordinate| @board[[coordinate.row, coordinate.column]] == nil }])
   # Remove token from board at coordinates
@@ -79,7 +79,7 @@ class GameState
       #preconditions
       [],
       #postconditions
-      [lambda { |obj, result, column| result <= @rows },
+      [lambda { |obj, result, column| result <= obj.rows },
        lambda { |obj, result, column| result >= 0 }])
   # Get the highest row that contains a token in the supplied column
   def height(column)
@@ -192,8 +192,8 @@ class Coordinate
 
   method_contract(
       #preconditions
-      [lambda { |obj, row, column| row.respond_to? :to_i && row.to_i > 0 },
-       lambda { |obj, row, column| column.respond_to? :to_i && column.to_i > 0 }],
+      [lambda { |obj, row, column| row.respond_to?( :to_i) && row.to_i >= 0 },
+       lambda { |obj, row, column| column.respond_to?(:to_i) && column.to_i >= 0 }],
       #postconditions
       [])
 
@@ -203,6 +203,6 @@ class Coordinate
   end
 
   def to_s
-    @row.to_s & ', ' & @column.to_s
+    "#{@row.to_s}, #{@column.to_s}"
   end
 end

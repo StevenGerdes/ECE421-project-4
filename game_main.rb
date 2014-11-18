@@ -18,13 +18,13 @@ class GameMain
     win_checkers = connect_game_factory.player_win_condition_checkers
     game_state = GameState.new(6, 7)
 
-    game_state.on_change.listen {
-      win_checkers.each_with_index { |checker, index|
-        if checker.check_win(game_state)
-          @on_quit.fire(index)
-        end
-      }
-    }
+    # game_state.on_change.listen {
+    #   win_checkers.each_with_index { |checker, index|
+    #     if checker.check_win(game_state)
+    #       @on_quit.fire(index)
+    #     end
+    #   }
+    # }
     command_view = CommandView.new(connect_game_factory, self, game_state)
     command_view.start
   end
