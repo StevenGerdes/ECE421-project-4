@@ -15,12 +15,21 @@ class ConnectGameFactory
   method_contract(
       #preconditions
       [lambda { |obj, player_num| player_num.respond_to?(:to_i) },
-       lambda { |obj, player_num| player_num.to_i > 0 }],
+       lambda { |obj, player_num| player_num.to_i >= 0 }],
       #postconditions
       [lambda { |obj, result, player_num| result.respond_to?(:get_token) }])
 
   def player_token_generator(player_num)
-    result = nil
+    if player_num.to_i == 0
+      color = 'FF0000'
+      value = 'r'
+    else
+      color = '0000FF'
+      value = 'b'
+    end
+
+    return TokenGenerator.new( color, value )
+
   end
 
   method_contract(
