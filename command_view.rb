@@ -25,17 +25,16 @@ class CommandView
         puts opts
       end
 
-      @game_state( @game_factory.player_token_generator( player ).get_token, row, column );
+      @game_state.play( @game_factory.player_token_generator( player ).get_token, row, column )
     end
 
-    game_main.win_event.listen{ |winner|  puts "player number #{winner} has won" }
-    game_main.exit_event.listen{ @running = false }
+    game_main.on_win.listen{ |winner|  puts "player number #{winner} has won" }
+    game_main.on_exit.listen{ @running = false }
     game_state.on_change.listen{ puts game_state.to_s }
 
-    run_cmds
   end
 
-  def run_cmds
+  def start
     while @running
       input = gets
       @cmd_parser.parse(input)
