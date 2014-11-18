@@ -1,18 +1,18 @@
 class GameState
-  attr_reader rows, columns, last_played
+  attr_reader :rows, :columns, :last_played, :player_turn, :on_change
 
-  def initialize(rows, columns, win_cond_checker)
+  def initialize(rows, columns)
     #precondition
-    unless (rows.respond_to? :to_i && rows.to_i > 0) ||
-        (columns.respond_to? :to_i && columns.to_i > 0) ||
-        win_cond_checker.is_a?(WinConditionChecker)
+    unless (rows.respond_to?(:to_i) && rows.to_i > 0) ||
+        (columns.respond_to?(:to_i) && columns.to_i > 0)
       raise PreconditionError
     end
 
     @rows = rows.to_i
     @columns = columns.to_i
+    @player_turn = 1
     @board = Hash.new(nil)
-    @win_condition_checker = win_cond_checker
+    @on_change = SimpleEvent.new
   end
 
   #Sets a token to the specified coordinate
@@ -32,13 +32,15 @@ class GameState
     if column_full? coordinate.column
       result = false
     else
-      @board[coordinate.row, coordinate.column] = token
+      @board[[coordinate.row, coordinate.column]] = token
       @last_played = Coordinate.new(coordinate.row, coordinate.column)
       result = true
     end
 
+    @on_change.fire
+
     #postcondition
-    if !@board.include?(token)
+    unless @board.include?(token)
       raise PostconditionError
     end
 
@@ -60,10 +62,11 @@ class GameState
       raise PreconditionError
     end
 
-    @board[coordinate.row, coordinate.column] = nil
+    @board[[coordinate.row, coordinate.column]] = nil
+    @on_change.fire
 
     #postcondition
-    if @board[coordinate.row, coordinate.column] != nil
+    if @board[[coordinate.row, coordinate.column]] != nil
       raise PostconditionError
     end
 
@@ -79,7 +82,7 @@ class GameState
     result = 0
 
     for i in 0..@rows - 1
-      if @board[i, column].nil?
+      if @board[[i, column]].nil?
         result = i
       end
     end
@@ -97,8 +100,47 @@ class GameState
     return result
   end
 
+  #reset game state to original state
   def reset
+    #invariant
+    invariant
 
+    @player_turn = 1
+    @board = Hash.new(nil)
+    @last_played = nil
+
+    #invariant
+    invariant
+  end
+
+  #prints out game board as a string
+  def to_s
+    #invariant
+    invariant
+
+    result = 'Rows: ' & @rows.to_s & "\n" &
+        'Columns: ' & @columns.to_s & "\n" &
+        'Players turn: ' & @player_turn.to_s & "\n" &
+        'Last Played: ' & @last_played.to_s & "\n"
+
+    for i in 0..@rows - 1
+      row_matrix = row i
+      for j in 0..@columns
+        if row_matrix[j].nil?
+          result = result & '-'
+        else
+          result = result & row_matrix[j].to_s
+        end
+      end
+      result = result & '/n'
+    end
+
+    #invariant
+    invariant
+  end
+
+  def row(i)
+    @board[i].product((0..@columns - 1).to_a).collect { |index| @board[index] }
   end
 
   private
@@ -119,7 +161,7 @@ end
 
 #Class to keep track of token coordinates
 class Coordinate
-  attr_reader row, column
+  attr_reader :row, :column
 
   def initialize(row, column)
     #precondition
@@ -130,5 +172,9 @@ class Coordinate
 
     @row = row.to_i
     @column = column.to_i
+  end
+
+  def to_s
+    @row.to_s & ', ' & @column.to_s
   end
 end
