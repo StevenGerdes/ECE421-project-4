@@ -93,7 +93,6 @@ class GameState
 
   #prints out game board as a string
   def to_s
-
     result = "Rows: #{@rows.to_s}\n" +
         "Columns: #{@columns.to_s}\n" +
         "Players turn: #{@player_turn.to_s}\n" +
@@ -108,13 +107,27 @@ class GameState
           result = result + row_matrix[j].to_s
         end
       end
-      result = result + '/n'
+      result = result + "\n"
     end
+
+    return result
 
   end
 
   def row(i)
-    @board[i].product((0..@columns - 1).to_a).collect { |index| @board[index] }
+    [i].product((0..@columns - 1).to_a).collect { |index| @board[index] }
+  end
+
+  def column(i)
+    (0..@rows - 1).to_a.product([i]).collect { |index| @board[index] }
+  end
+
+  def left_diagonal(i)
+
+  end
+
+  def right_diagonal(i)
+
   end
 
   private
