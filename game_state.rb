@@ -26,6 +26,16 @@ class GameState
 
   method_contract(
       #preconditions
+      [lambda { |obj, coordinate| coordinate.row < obj.rows },
+       lambda { |obj, coordinate| coordinate.column < obj.columns}],
+      #postconditions
+      [lambda { |obj, result, coordiante| result.nil? || result.is_a?(Token)}])
+  def get_token(coordinate)
+    @board[[coordinate.row, coordinate.column]]
+  end
+
+  method_contract(
+      #preconditions
       [lambda { |obj, token, coordinate| coordinate.is_a? Coordinate },
        lambda { |obj, token, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
        lambda { |obj, token, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 },
@@ -100,7 +110,7 @@ class GameState
 
     for i in 0..@rows - 1
       row_matrix = row i
-      for j in 0..@columns
+      for j in 0..@columns - 1
         if row_matrix[j].nil?
           result = result + '-'
         else
@@ -122,12 +132,46 @@ class GameState
     (0..@rows - 1).to_a.product([i]).collect { |index| @board[index] }
   end
 
-  def left_diagonal(i)
+  def right_diagonal(coordinate)
+    if (@rows - 1) - coordinate.row > (@columns - 1) - coordinate.column
+      top = (@columns - 1) - coordinate.column
+    else
+      top = (@rows - 1) - coordinate.row
+    end
 
+    if coordinate.row > coordinate.column
+      bottom = coordinate.column
+    else
+      bottom = coordinate.row
+    end
+
+    result = Array.new
+    for i in -bottom..top
+      result<<@board[[coordinate.row + i, coordinate.column + i]]
+    end
+
+    return result
   end
 
-  def right_diagonal(i)
+  def left_diagonal(coordinate)
+    if (@rows - 1) - coordinate.row > coordinate.column
+      top = coordinate.column
+    else
+      top = (@rows - 1) - coordinate.row
+    end
 
+    if coordinate.row > (@columns - 1) - coordinate.column
+      bottom = (@columns - 1) - coordinate.column
+    else
+      bottom = coordinate.row
+    end
+
+    result = Array.new
+    for i in -bottom..top
+      result<<@board[[coordinate.row + i, coordinate.column - i]]
+    end
+
+    return result
   end
 
   private
