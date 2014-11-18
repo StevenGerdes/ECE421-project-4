@@ -35,8 +35,12 @@ class CommandView
 
   def start
     while @running
+      print '>'
       input = gets
+      begin
       @cmd_parser.parse(input)
+      rescue OptionParser::InvalidOption
+      end
     end
   end
 end
