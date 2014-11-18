@@ -108,7 +108,7 @@ class GameState
         "Players turn: #{@player_turn.to_s}\n" +
         "Last Played: #{@last_played.to_s}\n"
 
-    for i in 0..@rows - 1
+    (@rows - 1).downto(0){ |i|
       row_matrix = row i
       for j in 0..@columns - 1
         if row_matrix[j].nil?
@@ -118,7 +118,7 @@ class GameState
         end
       end
       result = result + "\n"
-    end
+    }
 
     return result
 
@@ -168,7 +168,7 @@ class GameState
 
     result = Array.new
     for i in -bottom..top
-      result<<@board[[coordinate.row + i, coordinate.column - i]]
+      result<<@board[[coordinate.row - i, coordinate.column + i]]
     end
 
     return result
