@@ -40,11 +40,16 @@ class ConnectGameFactory
       [lambda { |obj, result, player_num| result.respond_to?(:check_win) }])
 
   def player_win_condition_checker(player_num)
-    WinConditionChecker.new
+    if player_num.to_i == 0
+      value = 'r'
+    else
+      value = 'b'
+    end
+    WinConditionChecker.new(value)
   end
 
   def player_win_condition_checkers
-    (0..@player_count).map { |player| player_win_condition_checker(player) }
+    (1..@player_count).map { |player| player_win_condition_checker(player) }
   end
 
 end

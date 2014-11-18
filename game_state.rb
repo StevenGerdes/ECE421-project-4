@@ -5,23 +5,28 @@ class GameState
   attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board
 
   class_invariant([lambda { |obj| obj.rows > 0 },
-                   lambda { |obj| obj.columns > 0 }])
+                   lambda { |obj| obj.columns > 0 },
+                   lambda { |obj| obj.players > 1 }])
 
   method_contract(
       #preconditions
-      [lambda { |obj, rows, columns| rows.respond_to?(:to_i) },
-       lambda { |obj, rows, columns| rows.to_i > 0 },
-       lambda { |obj, rows, columns| columns.respond_to?(:to_i) },
-       lambda { |obj, rows, columns| columns.to_i > 0 }],
+      [lambda { |obj, players, rows, columns| rows.respond_to?(:to_i) },
+       lambda { |obj, players, rows, columns| rows.to_i > 0 },
+       lambda { |obj, players, rows, columns| columns.respond_to?(:to_i) },
+       lambda { |obj, players, rows, columns| columns.to_i > 0 },
+       lambda { |obj, players, rows, columns| players.respond_to?(:to_i) },
+       lambda { |obj, players, rows, columns| players.to_i > 1 }],
       #postconditions
       [])
 
-  def initialize(rows, columns)
+  def initialize(players, rows, columns)
     @rows = rows.to_i
     @columns = columns.to_i
+    @players = players
     @player_turn = 1
     @board = Hash.new(nil)
     @on_change = SimpleEvent.new
+    @on_turn_change = SimpleEvent.new
   end
 
   method_contract(
@@ -30,6 +35,8 @@ class GameState
        lambda { |obj, coordinate| coordinate.column < obj.columns}],
       #postconditions
       [lambda { |obj, result, coordiante| result.nil? || result.is_a?(Token)}])
+
+  #Returns token at coordinate
   def get_token(coordinate)
     @board[[coordinate.row, coordinate.column]]
   end
@@ -40,23 +47,21 @@ class GameState
        lambda { |obj, token, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
        lambda { |obj, token, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 },
        lambda { |obj, token, coordinate| token.is_a?(Token) },
-       lambda { |obj, token, coordinate| !obj.board.include?(token) }],
+       lambda { |obj, token, coordinate| !obj.board.values.include?(token) }],
       #postconditions
       [lambda { |obj, result, token, coordinate| obj.board.values.include?(token) }])
+
   #Sets a token to the specified coordinate
   def play(token, coordinate)
-
-    if column_full? coordinate.column
-      result = false
-    else
-      @board[[coordinate.row, coordinate.column]] = token
-      @last_played = Coordinate.new(coordinate.row, coordinate.column)
-      result = true
-    end
+    @board[[coordinate.row, coordinate.column]] = token
+    @last_played = Coordinate.new(coordinate.row, coordinate.column)
 
     @on_change.fire
-
-    return result
+    @player_turn++
+    if @player_turn > @players
+      @player_turn = 1
+    end
+    @on_turn_change.fire
   end
 
   method_contract(
@@ -66,12 +71,11 @@ class GameState
        lambda { |obj, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 }],
       #postconditions
       [lambda { |obj, result, coordinate| @board[[coordinate.row, coordinate.column]] == nil }])
+
   # Remove token from board at coordinates
   def remove(coordinate)
-
     @board[[coordinate.row, coordinate.column]] = nil
     @on_change.fire
-
   end
 
 
@@ -81,6 +85,7 @@ class GameState
       #postconditions
       [lambda { |obj, result, column| result <= obj.rows },
        lambda { |obj, result, column| result >= 0 }])
+
   # Get the highest row that contains a token in the supplied column
   def height(column)
     result = 0
@@ -121,17 +126,19 @@ class GameState
     }
 
     return result
-
   end
 
+  #returns the ith row
   def row(i)
     [i].product((0..@columns - 1).to_a).collect { |index| @board[index] }
   end
 
+  #returns the ith column
   def column(i)
     (0..@rows - 1).to_a.product([i]).collect { |index| @board[index] }
   end
 
+  #returns the right diagonal of the desired coordinate
   def right_diagonal(coordinate)
     if (@rows - 1) - coordinate.row > (@columns - 1) - coordinate.column
       top = (@columns - 1) - coordinate.column
@@ -153,6 +160,7 @@ class GameState
     return result
   end
 
+  #returns the left diagonal of the desired coordinates
   def left_diagonal(coordinate)
     if (@rows - 1) - coordinate.row > coordinate.column
       top = coordinate.column
@@ -168,7 +176,7 @@ class GameState
 
     result = Array.new
     for i in -bottom..top
-      result<<@board[[coordinate.row - i, coordinate.column + i]]
+      result<<@board[[coordinate.row + i, coordinate.column - i]]
     end
 
     return result
