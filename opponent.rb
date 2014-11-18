@@ -1,32 +1,22 @@
 require './contract_exceptions'
 class Opponent
+
+  class_invariant([lamdba { |obj| !@tokenGenerator.nil? }])
+
+  method_contract(
+      #preconditions
+      [lambda { |obj, game_state| game_state.respond_to?(:play)}],
+      #postconditions
+      [lambda { |obj, result, game_state | game_state.last_played.equal? result}])
+
   def play(game_state)
-    invariant
-    unless game_state.respond_to?(:play)
-      raise PreconditionError
-    end
 
     #do some stuff to find
     token = @tokenGenerator.get_token
-    row = nil
-    column = nil
+    coord = Coordinate.new(0,0)
 
+    game_state.play(token, coord)
 
-    game_state.play( token, row, column )
-
-
-    invariant
-
-    unless game_state.last_played.equal? token
-      raise PostconditionError
-    end
-
-  end
-
-  private
-  def invariant
-    if @tokenGenerator.nil?
-      raise InvarientException
-    end
+    return coord
   end
 end

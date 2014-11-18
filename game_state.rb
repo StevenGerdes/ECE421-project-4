@@ -1,13 +1,22 @@
+require './contract'
+
 class GameState
+  include Contract
   attr_reader :rows, :columns, :last_played, :player_turn, :on_change
 
-  def initialize(rows, columns)
-    #precondition
-    unless (rows.respond_to?(:to_i) && rows.to_i > 0) ||
-        (columns.respond_to?(:to_i) && columns.to_i > 0)
-      raise PreconditionError
-    end
+  class_invariant([lambda { |obj| obj.rows > 0 },
+                   lambda { |obj| obj.columns > 0 }])
 
+  method_contract(
+      #preconditions
+      [lambda { |obj, rows, columns| rows.respond_to?(:to_i) },
+       lambda { |obj, rows, columns| rows.to_i > 0 },
+       lambda { |obj, rows, columns| columns.respond_to?(:to_i) },
+       lambda { |obj, rows, columns| columns.to_i > 0 }],
+      #postconditions
+      [])
+
+  def initialize(rows, columns)
     @rows = rows.to_i
     @columns = columns.to_i
     @player_turn = 1
@@ -15,19 +24,17 @@ class GameState
     @on_change = SimpleEvent.new
   end
 
+  method_contract(
+      #preconditions
+      [lambda { |obj, token, coordinate| coordinate.is_a? Coordinate },
+       lambda { |obj, token, coordinate| coordinate.row < @rows && coordinate.row >= 0 },
+       lambda { |obj, token, coordinate| coordinate.column < @columns && coordinate.column >= 0 },
+       lambda { |obj, token, coordinate| token.is_a?(Token) },
+       lambda { |obj, token, coordinate| !@board.include?(token) }],
+      #postconditions
+      [lambda { |obj, result, token, coordinate| @board.include?(token) }])
   #Sets a token to the specified coordinate
   def play(token, coordinate)
-    #invariant
-    invariant
-
-    #precondition
-    if (!coordinate.is_a? Coordinate) ||
-        (coordinate.row >= @rows && coordinate.row < 0) ||
-        (coordinate.column >= @columns && coordinate.column < 0) ||
-        token.is_a?(Token) ||
-        @board.include?(token)
-      raise PreconditionError
-    end
 
     if column_full? coordinate.column
       result = false
@@ -39,46 +46,33 @@ class GameState
 
     @on_change.fire
 
-    #postcondition
-    unless @board.include?(token)
-      raise PostconditionError
-    end
-
-    #invariant
-    invariant
-
     return result
   end
 
+  method_contract(
+      #preconditions
+      [lambda { |obj, coordinate| coordinate.is_a? Coordinate },
+       lambda { |obj, coordinate| coordinate.row < @rows && coordinate.row >= 0 },
+       lambda { |obj, coordinate| coordinate.column < @rows && coordinate.column >= 0 }],
+      #postconditions
+      [lambda { |obj, result, coordinate| @board[[coordinate.row, coordinate.column]] == nil }])
   # Remove token from board at coordinates
   def remove(coordinate)
-    #invariant
-    invariant
-
-    #precondition
-    if !(coordinate.is_a? Coordinate) ||
-        (coordinate.row >= @rows && coordinate.row < 0) ||
-        (coordinate.column >= @columns && coordinate.column < 0)
-      raise PreconditionError
-    end
 
     @board[[coordinate.row, coordinate.column]] = nil
     @on_change.fire
 
-    #postcondition
-    if @board[[coordinate.row, coordinate.column]] != nil
-      raise PostconditionError
-    end
-
-    #invariant
-    invariant
   end
 
+
+  method_contract(
+      #preconditions
+      [],
+      #postconditions
+      [lambda { |obj, result, column| result <= @rows },
+       lambda { |obj, result, column| result >= 0 }])
   # Get the highest row that contains a token in the supplied column
   def height(column)
-    #invariant
-    invariant
-
     result = 0
 
     for i in 0..@rows - 1
@@ -87,36 +81,18 @@ class GameState
       end
     end
 
-    #postcondition
-    if result > @rows ||
-        result < 0 ||
-        !result.nil?
-      raise PostconditionError
-    end
-
-    #invariant
-    invariant
-
     return result
   end
 
   #reset game state to original state
   def reset
-    #invariant
-    invariant
-
     @player_turn = 1
     @board = Hash.new(nil)
     @last_played = nil
-
-    #invariant
-    invariant
   end
 
   #prints out game board as a string
   def to_s
-    #invariant
-    invariant
 
     result = 'Rows: ' & @rows.to_s & "\n" &
         'Columns: ' & @columns.to_s & "\n" &
@@ -135,8 +111,6 @@ class GameState
       result = result & '/n'
     end
 
-    #invariant
-    invariant
   end
 
   def row(i)
@@ -144,13 +118,6 @@ class GameState
   end
 
   private
-  def invariant
-    if @rows < 0 ||
-        @columns < 0
-      raise InvarientError
-    end
-  end
-
   def column_full?(column)
     if @board[[@rows - 1][column]] != nil
       return true
@@ -163,13 +130,16 @@ end
 class Coordinate
   attr_reader :row, :column
 
-  def initialize(row, column)
-    #precondition
-    unless (row.respond_to? :to_i && row.to_i > 0) ||
-        (column.respond_to? :to_i && column.to_i > 0)
-      raise PreconditionError
-    end
+  class_invariant([])
 
+  method_contract(
+      #preconditions
+      [lambda{ |obj, row, column| row.respond_to? :to_i && row.to_i > 0},
+       lambda{ |obj, row, column| column.respond_to? :to_i && column.to_i > 0}],
+      #postconditions
+      [])
+
+  def initialize(row, column)
     @row = row.to_i
     @column = column.to_i
   end
