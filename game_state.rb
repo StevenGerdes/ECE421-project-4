@@ -42,7 +42,7 @@ class GameState
        lambda { |obj, token, coordinate| token.is_a?(Token) },
        lambda { |obj, token, coordinate| !obj.board.include?(token) }],
       #postconditions
-      [lambda { |obj, result, token, coordinate| obj.board.include?(token) }])
+      [lambda { |obj, result, token, coordinate| obj.board.values.include?(token) }])
   #Sets a token to the specified coordinate
   def play(token, coordinate)
 
@@ -203,6 +203,6 @@ class Coordinate
   end
 
   def to_s
-    @row.to_s & ', ' & @column.to_s
+    "#{@row.to_s}, #{@column.to_s}"
   end
 end
