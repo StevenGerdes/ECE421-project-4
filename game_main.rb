@@ -5,7 +5,7 @@ require './connect_game_factory'
 
 class GameMain
 
-  attr_reader on_win, on_quit
+  attr_reader :on_win, :on_quit
   def initialize( debugging )
     @on_win = SimpleEvent.new
     @on_quit = SimpleEvent.new

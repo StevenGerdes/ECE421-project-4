@@ -22,7 +22,7 @@ class ConnectGameFactory
 
   def player_win_condition_checker(player_num)
     #precondition
-    unless player_num.respond_to? :to_i && player_num.to_i > 0
+    unless player_num.respond_to?(:to_i) && player_num.to_i > 0
       raise PreconditionError
     end
 
@@ -35,7 +35,7 @@ class ConnectGameFactory
   end
 
   def player_win_condition_checkers
-    0..@player_count.map { |player| player_win_condition_checker(player) }
+    (0..@player_count).map { |player| player_win_condition_checker(player) }
   end
 
 end
