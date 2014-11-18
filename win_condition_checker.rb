@@ -32,7 +32,7 @@ class WinConditionChecker
   def four_in_row(array, value)
     num_in_row = 0
     array.each do |token|
-      if token.value == value
+      if !(token.nil?) && token.value == value
         num_in_row += 1
         return true if num_in_row == 4
       else
