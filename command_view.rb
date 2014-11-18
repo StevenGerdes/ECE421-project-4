@@ -8,17 +8,21 @@ class CommandView
     @game_main = game_main
     @game_state = game_state
 
-    @cmd_parser = opt_parser = OptionParser.new do |opts|
+    @cmd_parser = OptionParser.new do |opts|
       opts.on( '-d', '--display', 'display the game board') do
         puts @game_state.to_s
       end
 
       opts.on('-c', Integer, 'display current player' ) do
-        puts @game_state.current_player.to_s
+        puts @game_state.player_turn.to_s
       end
 
-      opts.on( '-p number,row,column', '--play x,y,z', Array, 'Play token for player at coordinates') do |arg_list|
+      opts.on( '-p number,row,column', '--play number,row,column', Array, 'Play token for player at coordinates') do |arg_list|
         @game_state.play(@game_factory.player_token_generator(arg_list[0]).get_token, Coordinate.new(arg_list[1], arg_list[2]))
+      end
+
+      opts.on( '-e', '--exit', 'Exit Debug Console') do
+        @running = false
       end
 
       opts.on_tail('-h', '--help', 'Show this message') do
