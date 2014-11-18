@@ -168,7 +168,7 @@ class GameState
 
     result = Array.new
     for i in -bottom..top
-      result<<@board[[coordinate.row - i, coordinate.column + i]]
+      result<<@board[[coordinate.row + i, coordinate.column - i]]
     end
 
     return result
