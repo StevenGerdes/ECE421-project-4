@@ -94,21 +94,21 @@ class GameState
   #prints out game board as a string
   def to_s
 
-    result = 'Rows: ' & @rows.to_s & "\n" &
-        'Columns: ' & @columns.to_s & "\n" &
-        'Players turn: ' & @player_turn.to_s & "\n" &
-        'Last Played: ' & @last_played.to_s & "\n"
+    result = "Rows: #{@rows.to_s}\n" +
+        "Columns: #{@columns.to_s}\n" +
+        "Players turn: #{@player_turn.to_s}\n" +
+        "Last Played: #{@last_played.to_s}\n"
 
     for i in 0..@rows - 1
       row_matrix = row i
       for j in 0..@columns
         if row_matrix[j].nil?
-          result = result & '-'
+          result = result + '-'
         else
-          result = result & row_matrix[j].to_s
+          result = result + row_matrix[j].to_s
         end
       end
-      result = result & '/n'
+      result = result + '/n'
     end
 
   end
@@ -135,8 +135,8 @@ class Coordinate
 
   method_contract(
       #preconditions
-      [lambda{ |obj, row, column| row.respond_to? :to_i && row.to_i > 0},
-       lambda{ |obj, row, column| column.respond_to? :to_i && column.to_i > 0}],
+      [lambda { |obj, row, column| row.respond_to? :to_i && row.to_i > 0 },
+       lambda { |obj, row, column| column.respond_to? :to_i && column.to_i > 0 }],
       #postconditions
       [])
 
