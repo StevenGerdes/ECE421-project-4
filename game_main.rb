@@ -1,14 +1,18 @@
-require './contract_exceptions'
 require './simple_event'
 require './game_state'
 require './connect_game_factory'
+require './command_view'
 
 class GameMain
 
-  attr_reader :on_win, :on_quit
-  def initialize( debugging )
+  attr_accessor :on_win, :on_quit
+
+  def initialize
     @on_win = SimpleEvent.new
     @on_quit = SimpleEvent.new
+  end
+
+  def start
 
     connect_game_factory = ConnectGameFactory.new(2, :connect4)
     win_checkers = connect_game_factory.player_win_condition_checkers
@@ -21,14 +25,8 @@ class GameMain
         end
       }
     }
-
-    unless debugging
-      return
-    end
-
-    command_view = CommandView.new( connect_game_factory, game_state, self)
+    command_view = CommandView.new(connect_game_factory, self, game_state)
     command_view.start
-
   end
 
 end

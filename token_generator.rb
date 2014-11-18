@@ -1,6 +1,8 @@
-require './contract_exceptions'
+require './contract'
 
 class TokenGenerator
+  include Contract
+
   class_invariant([])
 
   method_contract(

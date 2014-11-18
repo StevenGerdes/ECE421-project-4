@@ -1,4 +1,6 @@
 require './contract'
+require './win_condition_checker'
+require './token_generator'
 
 class ConnectGameFactory
   include Contract
@@ -24,12 +26,12 @@ class ConnectGameFactory
   method_contract(
       #preconditions
       [lambda { |obj, player_num| player_num.respond_to?(:to_i) },
-       lambda { |obj, player_num| player_num.to_i > 0 }],
+       lambda { |obj, player_num| player_num.to_i >= 0 }],
       #postconditions
       [lambda { |obj, result, player_num| result.respond_to?(:check_win) }])
 
   def player_win_condition_checker(player_num)
-    result = nil
+    WinConditionChecker.new
   end
 
   def player_win_condition_checkers

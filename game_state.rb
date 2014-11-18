@@ -128,6 +128,7 @@ end
 
 #Class to keep track of token coordinates
 class Coordinate
+  include Contract
   attr_reader :row, :column
 
   class_invariant([])
