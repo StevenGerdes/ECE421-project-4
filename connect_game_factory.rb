@@ -4,6 +4,7 @@ require './token_generator'
 require './game_state'
 require './opponent'
 require './connect_game'
+require './pattern_checker'
 
 class ConnectGameFactory
 
@@ -18,15 +19,15 @@ class ConnectGameFactory
   def initialize(players, mode)
     @player_count = 2
     @mode = mode
-	@titles = { :connect4 => 'Connect Four', :otto_toot => 'OTTO TOOT'}
+    @titles = {:connect4 => 'Connect Four', :otto_toot => 'OTTO TOOT'}
     @game_mode = Hash.new
     @game_mode[:connect4] = [
         PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
         PlayerGameMode.new(TokenGenerator.new('0000FF', 'g'), Connect4Checker.new('b')),
     ]
     @game_mode[:otto_toot] = [
-        PlayerGameMode.new(TokenGenerator.new('FF0000', 't'), Connect4Checker.new('r')),
-        PlayerGameMode.new(TokenGenerator.new('0000FF', 'o'), Connect4Checker.new('g')),
+        PlayerGameMode.new(TokenGenerator.new('FF0000', 't'), PatternChecker.new(['o','t','t','o'])),
+        PlayerGameMode.new(TokenGenerator.new('0000FF', 'o'), PatternChecker.new(['t','o','o','t'])),
     ]
 
     connect_game.on_play.listen {
