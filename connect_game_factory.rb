@@ -28,7 +28,7 @@ class ConnectGameFactory
       value = 'b'
     end
 
-    return TokenGenerator.new( color, value )
+    return TokenGenerator.new(color, value)
 
   end
 
@@ -51,5 +51,6 @@ class ConnectGameFactory
   def player_win_condition_checkers
     (1..@player_count).map { |player| player_win_condition_checker(player) }
   end
+
 
 end
