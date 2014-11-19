@@ -5,11 +5,6 @@ require './game_main'
 game = GameMain.new()
 
 #if ui isn't on the game won't start unless you do it yourself
-<<<<<<< HEAD
-unless $UI
-    game.start_game(1, :connect4)
-=======
 if $DEBUG
-  game.start_game(2, :otto_toot)
->>>>>>> 8ad35aba4c3985445fa70d6bedbe6e403d18f2ea
+    game.start_game(1, :connect4)
 end
