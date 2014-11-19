@@ -182,12 +182,29 @@ class GameState
     return result
   end
 
-  private
+  method_contract(
+      #preconditions
+      [lambda { |obj, column| column.respond_to?(:to_i) },
+       lambda { |obj, column| column < obj.columns && column >= 0 }],
+      #postconditions
+      [])
+
+  #checks if a column is full
   def column_full?(column)
-    if @board[[@rows - 1][column]] != nil
+    if @board[[@rows - 1][column.to_i]] != nil
       return true
     end
     return false
+  end
+
+  #checks if a board is ful
+  def is_full?
+    for i in 0..@rows - 1
+      unless column_full?(i)
+        return false
+      end
+    end
+    return true
   end
 end
 

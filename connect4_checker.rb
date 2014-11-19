@@ -1,6 +1,6 @@
 require './contract'
 
-class WinConditionChecker
+class Connect4Checker
   include Contract
 
   class_invariant([])
