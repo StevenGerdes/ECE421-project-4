@@ -1,5 +1,5 @@
 require './contract'
-require './win_condition_checker'
+require './connect4_checker'
 require './token_generator'
 
 class ConnectGameFactory
@@ -45,7 +45,7 @@ class ConnectGameFactory
     else
       value = 'b'
     end
-    WinConditionChecker.new(value)
+    Connect4Checker.new(value)
   end
 
   def player_win_condition_checkers
