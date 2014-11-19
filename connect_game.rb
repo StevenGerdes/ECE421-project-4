@@ -23,13 +23,13 @@ class ConnectGame
       @players.each_with_index { |player, index|
         if player.win_condition.check_win(game_state)
           winner = true
-          connect_game.on_win.fire(index + 1)
+          @on_win.fire(index + 1)
         end
       }
       if winner
-        game_state.reset
+        @game_state.reset
       elsif !@game_state.is_full?
-        game_state.change_turn
+        @game_state.change_turn
       end
 
     end
