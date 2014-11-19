@@ -1,6 +1,7 @@
 require 'gtk2'
+require './game_main'
 
-class ConnectFourView 
+class ConnectFour
 
   def initialize( )
     if __FILE__ == $0
@@ -17,10 +18,21 @@ class ConnectFourView
       menu.signal_connect( "activate" ) { Gtk.main_quit }
       
 	  menu = @builder.get_object("menuNew")
-      menu.signal_connect( "activate" ) { game_state.reset }
+      menu.signal_connect( "activate" ) {  }
 	  
-	  game_state.on_win{ win_exit }
-	  game_state.on_play
+	  (0..6).each{ |col|
+	  	@builder.get_object("play_#{col}").signal_connect('clicked'){
+			game_main.play(col)
+		}
+	
+	  }
+		
+	  game_state.on_change{
+	  	game_state.each
+		@builder.get_object(
+	  }
+	  #game_state.on_win{ win_exit }
+	  #game_state.on_play
 
       window.show()
       Gtk.main()
@@ -29,3 +41,5 @@ class ConnectFourView
   end
 
 end
+
+ConnectFour.new
