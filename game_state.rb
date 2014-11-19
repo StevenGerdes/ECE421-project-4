@@ -31,7 +31,8 @@ class GameState
 
   method_contract(
       #preconditions
-      [lambda { |obj, coordinate| coordinate.row < obj.rows },
+      [lambda { |obj, coordinate| coordinate.is_a?(Coordinate) },
+       lambda { |obj, coordinate| coordinate.row < obj.rows },
        lambda { |obj, coordinate| coordinate.column < obj.columns}],
       #postconditions
       [lambda { |obj, result, coordiante| result.nil? || result.is_a?(Token)}])
@@ -78,7 +79,6 @@ class GameState
     @on_change.fire
   end
 
-
   method_contract(
       #preconditions
       [],
@@ -103,7 +103,7 @@ class GameState
   def reset
     @player_turn = 1
     @board = Hash.new(nil)
-    @last_played = nil
+    @last_played = Coordinate.new(0,0)
   end
 
   #prints out game board as a string
