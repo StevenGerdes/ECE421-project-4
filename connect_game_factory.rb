@@ -40,7 +40,7 @@ class ConnectGameFactory
       [lambda { |obj, result, player_num| result.respond_to?(:check_win) }])
 
   def player_win_condition_checker(player_num)
-    if player_num.to_i == 0
+    if player_num.to_i == 1
       value = 'r'
     else
       value = 'b'
