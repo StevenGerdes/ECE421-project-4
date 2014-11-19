@@ -1,8 +1,9 @@
 require './simple_event'
 require './command_view'
 require './connect_game_factory'
-require './start_view' if $UI
-require './game_view' if $UI
+require './start_view' 
+require './game_view' 
+
 class GameMain
 
   def initialize()
