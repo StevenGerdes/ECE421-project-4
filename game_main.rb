@@ -13,7 +13,7 @@ class GameMain
   def start_game(players, type)
     game_factory = ConnectGameFactory.new(players, type)
 
-    GameView.new(game_factory.connect_game) if $UI
+    GameView.new(game_factory.connect_game, game_factory.game_state) if $UI
 
     CommandView.new(game_factory) if $DEBUG
   end

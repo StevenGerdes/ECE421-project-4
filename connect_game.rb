@@ -3,12 +3,13 @@ require './game_state'
 class ConnectGame
 
   attr_accessor :on_win, :on_quit, :on_play
-  attr_reader :game_state
+  attr_reader :game_state, :title
 
-  def initialize(game_state, token_generators)
+  def initialize(title, game_state, token_generators)
     @on_win = SimpleEvent.new
     @on_quit = SimpleEvent.new
     @on_play = SimpleEvent.new
+	@title = title
     @game_state = game_state
     @token_generators = token_generators
   end
