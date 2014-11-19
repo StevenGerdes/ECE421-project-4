@@ -26,8 +26,8 @@ class ConnectGameFactory
         PlayerGameMode.new(TokenGenerator.new('0000FF', 'g'), Connect4Checker.new('b')),
     ]
     @game_mode[:otto_toot] = [
-        PlayerGameMode.new(TokenGenerator.new('FF0000', 't'), PatternChecker.new(['o','t','t','o'])),
-        PlayerGameMode.new(TokenGenerator.new('0000FF', 'o'), PatternChecker.new(['t','o','o','t'])),
+        PlayerGameMode.new(TokenGenerator.new('FF0000', 'o'), PatternChecker.new(['o','t','t','o'])),
+        PlayerGameMode.new(TokenGenerator.new('0000FF', 't'), PatternChecker.new(['t','o','o','t'])),
     ]
 
 
