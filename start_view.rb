@@ -28,7 +28,7 @@ class StartView
         players = 2
       end
 
-      game_main.start(players, type)
+      game_main.start_game(players, type)
     }
 
     window.show()
