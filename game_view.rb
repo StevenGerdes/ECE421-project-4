@@ -13,8 +13,9 @@ class GameView
       window = @builder.get_object('mainWindow')
       window.signal_connect('destroy') { Gtk.main_quit }
 	window.title = game.title
-      menu = @builder.get_object('menuNew')
-      menu.signal_connect('activate') { game_state.reset }
+      menu = @builder.get_object('ResetButton')
+      menu.signal_connect('clicked') { 
+	  game_state.reset }
 
       @picture_grid = @builder.get_object('play_grid')
 

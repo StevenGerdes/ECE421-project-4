@@ -8,18 +8,13 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkMenuBar" id="menubar1">
+          <object class="GtkButton" id="ResetButton">
+            <property name="label" translatable="yes">reset</property>
             <property name="visible">True</property>
-            <child>
-              <object class="GtkMenuItem" id="menuNew">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Reset Game</property>
-                <property name="use_underline">True</property>
-              </object>
-            </child>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
           </object>
           <packing>
-            <property name="expand">False</property>
             <property name="position">0</property>
           </packing>
         </child>
