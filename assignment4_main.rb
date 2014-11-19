@@ -10,6 +10,6 @@ game = GameMain.new()
 
 #if ui isn't on the game won't start unless you do it yourself
 unless $UI
-    game.start_game(2, :connect4)
+    game.start_game(1, :connect4)
 end
 

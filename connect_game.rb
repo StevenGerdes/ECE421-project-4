@@ -17,7 +17,13 @@ class ConnectGame
     unless @game_state.column_full?(column)
       @game_state.play(@token_generators[@game_state.player_turn - 1].get_token, Coordinate.new(@game_state.height(column), column))
       @on_play.fire
+      unless  @game_state.is_full?
+        change_turn
+      end
     end
   end
 
+  def change_turn
+    @game_state.change_turn
+  end
 end

@@ -2,7 +2,7 @@ require './contract'
 
 class GameState
   include Contract
-  attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board, :players
+  attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board, :players, :on_turn_change
 
   class_invariant([lambda { |obj| obj.rows > 0 },
                    lambda { |obj| obj.columns > 0 },
@@ -56,8 +56,10 @@ class GameState
   def play(token, coordinate)
     @board[[coordinate.row, coordinate.column]] = token
     @last_played = Coordinate.new(coordinate.row, coordinate.column)
-
     @on_change.fire
+  end
+
+  def change_turn
     @player_turn += 1
     if @player_turn > @players
       @player_turn = 1

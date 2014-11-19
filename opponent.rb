@@ -1,34 +1,33 @@
 require './contract'
 class Opponent
-
   include Contract
+  attr_reader :game_state
 
-  class_invariant([lambda { |obj| !@game_main.nil? },
-                   lambda { |obj| !@game_state.nil?}])
+  class_invariant([lambda { |obj| !((obj.game_state).nil?)}])
 
   method_contract(
       #preconditions
-      [lambda { |obj, game_main, game_state| game_main.respond_to?(:play)},
-       lambda { |obj, game_main, game_state| game_state.respond_to?(:on_turn_change)},
-       lambda { |obj, game_main, game_state| game_state.respond_to?(:player_turn)}],
+      [lambda { |obj, connect_game, game_state| connect_game.respond_to?(:play)},
+       lambda { |obj, connect_game, game_state| game_state.respond_to?(:on_turn_change)},
+       lambda { |obj, connect_game, game_state| game_state.respond_to?(:player_turn)}],
       #postconditions
       [])
 
-  def initialize(game_main, game_state)
+  def initialize(connect_game, game_state)
     @game_state = game_state
     game_state.on_turn_change.listen{
       if game_state.player_turn == 2
-        game_main.play(self.play)
+        connect_game.play(self.play)
       end
     }
   end
 
   method_contract(
       #preconditions
-      [lambda { |obj| !@game_state.is_full?}],
+      [lambda { |obj| !((obj.game_state).is_full?)}],
       #postconditions
       [lambda { |obj, result | result.respond_to?(:to_i)},
-       lambda { |obj, result | result.to_i < @game_state.columns}])
+       lambda { |obj, result | result.to_i < obj.game_state.columns}])
 
   #Chooses a column to play in at random for the AI
   def play
