@@ -37,7 +37,7 @@ class ConnectGameFactory
   end
 
   def connect_game
-    @connect_game = ConnectGame.new(@titles[@mode], game_state, player_token_generators) if @connect_game.nil?
+    @connect_game = ConnectGame.new(@titles[@mode], game_state, @game_mode[@mode]) if @connect_game.nil?
     @connect_game
   end
 
