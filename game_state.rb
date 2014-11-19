@@ -58,6 +58,9 @@ class GameState
     @last_played = Coordinate.new(coordinate.row, coordinate.column)
 
     @on_change.fire
+  end
+
+  def advance_turn
     @player_turn += 1
     if @player_turn > @players
       @player_turn = 1

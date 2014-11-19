@@ -18,6 +18,20 @@ class ConnectGame
     unless @game_state.column_full?(column)
       @game_state.play(@token_generators[@game_state.player_turn - 1].get_token, Coordinate.new(@game_state.height(column), column))
       @on_play.fire
+
+      winner = false
+      player_win_condition_checkers.each_with_index { |checker, index|
+        if checker.check_win(game_state)
+          winner = true
+          connect_game.on_win.fire(index + 1)
+        end
+      }
+      if winner
+        game_state.reset
+      else
+        game_state.advance_turn
+      end
+
     end
   end
 

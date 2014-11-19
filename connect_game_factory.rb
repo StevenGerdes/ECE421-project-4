@@ -30,14 +30,6 @@ class ConnectGameFactory
         PlayerGameMode.new(TokenGenerator.new('0000FF', 'o'), PatternChecker.new(['t','o','o','t'])),
     ]
 
-    connect_game.on_play.listen {
-      player_win_condition_checkers.each_with_index { |checker, index|
-        if checker.check_win(game_state)
-          connect_game.on_win.fire(index)
-        end
-      }
-    }
-    connect_game.on_win.listen { game_state.reset }
 
     if players == 1
       init_opponent
