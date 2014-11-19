@@ -3,8 +3,7 @@ require './game_main'
 
 class GameView
 
-  def initialize(game, game_state)
-    if __FILE__ == $0
+  def initialize#(game, game_state)
       Gtk.init
 
       @builder = Gtk::Builder::new
@@ -20,18 +19,18 @@ class GameView
       menu = @builder.get_object('menuNew')
       menu.signal_connect('activate') {}
 
-      game
-      game_state.on_change.listen{
-        update_ui(game_state)
-      }
+#      game
+#      game_state.on_change.listen{
+#        update_ui(game_state)
+#      }
 
-      (0..6).each { |col|
-        @builder.get_object("play_#{col}").signal_connect('clicked') {
-          game.play(col)
-        }
-      }
+ #     (0..6).each { |col|
+ #       @builder.get_object("play_#{col}").signal_connect('clicked') {
+ #         game.play(col)
+ #       }
+ #     }
 
-      game.start( 1, factory)
+  #    game.start( 1, factory)
 
       window.show()
       Gtk.main()
@@ -42,8 +41,5 @@ class GameView
 
     end
 
-  end
 
 end
-
-GameView.new

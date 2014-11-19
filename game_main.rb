@@ -1,7 +1,7 @@
 require './simple_event'
-require './game_state'
-require './connect_game_factory'
 require './command_view'
+require './start_view'
+require './game_view'
 
 class GameMain
 
@@ -12,7 +12,7 @@ class GameMain
     @on_win = SimpleEvent.new
     @on_quit = SimpleEvent.new
 
-    StartView.new(self) if ui_on
+    StartView.new
   end
 
   def start_game(game_factory)
@@ -21,13 +21,15 @@ class GameMain
 
     @on_win.listen{ game_state.reset }
 
-    game_state.on_change.listen {
+    @game_state.on_change.listen {
       win_checkers.each_with_index { |checker, index|
         if checker.check_win(game_state)
           @on_win.fire(index)
         end
       }
     }
+	
+	GameView.new(game_main, game_state)	
 
     Thread.new{ CommandView.new(game_factory, self, game_state)} if $DEBUG
   end
