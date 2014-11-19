@@ -28,11 +28,14 @@ class ConnectGame
       }
       if winner
         game_state.reset
-      else
-        game_state.advance_turn
+      elsif ! @game_state.is_full?
+        game_state.change_turn
       end
 
     end
   end
 
+  def change_turn
+    @game_state.change_turn
+  end
 end

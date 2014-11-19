@@ -6,6 +6,5 @@ game = GameMain.new()
 
 #if ui isn't on the game won't start unless you do it yourself
 if $DEBUG
-  game.start_game(2, :otto_toot)
+    game.start_game(1, :connect4)
 end
-
