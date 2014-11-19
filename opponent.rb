@@ -1,8 +1,10 @@
-require './contract_exceptions'
+require './contract'
 class Opponent
 
-  class_invariant([lambda { |obj| !@game_main.nil? }],
-                   lambda { |obj| !@game_state.nil?})
+  include Contract
+
+  class_invariant([lambda { |obj| !@game_main.nil? },
+                   lambda { |obj| !@game_state.nil?}])
 
   method_contract(
       #preconditions

@@ -1,38 +1,52 @@
 require './contract'
 require './connect4_checker'
 require './token_generator'
+require './game_state'
 require './opponent'
+require './connect_game'
 
 class ConnectGameFactory
-  
+
   include Contract
 
-	attr_reader :player_count
+  attr_reader :player_count
 
   class_invariant([])
 
+  PlayerGameMode = Struct.new(:token_generator, :win_condition)
 
-  def initialize(mode, players)
+  def initialize(players, mode)
     @player_count = 2
-	PlayerGameMode = Struct.new(:token_generator, :win_condition)
-	game_modes = Hash.new
-  	game_mode[:connect4] = [
-		PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
-		PlayerGameMode.new(TokenGenerator.new('0000FF', 'b'), Connect4Checker.new('b')),
-	]
-	game_mode[:otto_toot] = [
-		PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
-		PlayerGameMode.new(TokenGenerator.new('0000FF', 'b'), Connect4Checker.new('b')),
-	]
+    @mode = mode
 
-  	if( players == 1 )
-		init_opponent
-	end
+    @game_mode = Hash.new
+    @game_mode[:connect4] = [
+        PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
+        PlayerGameMode.new(TokenGenerator.new('0000FF', 'b'), Connect4Checker.new('b')),
+    ]
+    @game_mode[:otto_toot] = [
+        PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
+        PlayerGameMode.new(TokenGenerator.new('0000FF', 'b'), Connect4Checker.new('b')),
+    ]
+
+    game_state.on_change.listen {
+      player_win_condition_checkers.each_with_index { |checker, index|
+        if checker.check_win(game_state)
+          connect_game.on_win.fire(index)
+        end
+      }
+    }
+    connect_game.on_win.listen { game_state.reset }
+
+    if players == 1
+      init_opponent
+    end
   end
 
-	def init_opponent
-			Opponent.new(game_main, game_state, player_token_generator(2))
-	end
+  def connect_game
+    @connect_game = ConnectGame.new(game_state) if @connect_game.nil?
+    return @connect_game
+  end
 
 
   method_contract(
@@ -42,8 +56,9 @@ class ConnectGameFactory
        lambda { |obj, player_num| player_num.to_i <= obj.player_count }],
       #postconditions
       [lambda { |obj, result, player_num| result.respond_to?(:get_token) }])
+
   def player_token_generator(player_num)
-    return game_mode[@mode][player_num - 1] 
+    return @game_mode[@mode][player_num - 1].token_generator
   end
 
   method_contract(
@@ -53,8 +68,9 @@ class ConnectGameFactory
        lambda { |obj, player_num| player_num.to_i <= obj.player_count }],
       #postconditions
       [lambda { |obj, result, player_num| result.respond_to?(:check_win) }])
+
   def player_win_condition_checker(player_num)
-  	return game_mode[@mode][player_num - 1]
+    return @game_mode[@mode][player_num - 1].win_condition
   end
 
   def player_win_condition_checkers
@@ -62,8 +78,16 @@ class ConnectGameFactory
   end
 
   def game_state
-	@game_state = GameState.new if @game_state.nil?
-	return @game_state
+    if @game_state.nil?
+      @game_state = GameState.new(@player_count, 6, 7)
+    end
+    return @game_state
+  end
+
+  private
+
+  def init_opponent
+    Opponent.new(connect_game, game_state, player_token_generator(2))
   end
 
 

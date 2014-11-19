@@ -2,7 +2,7 @@ require './contract'
 
 class GameState
   include Contract
-  attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board
+  attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board, :players
 
   class_invariant([lambda { |obj| obj.rows > 0 },
                    lambda { |obj| obj.columns > 0 },
@@ -57,7 +57,7 @@ class GameState
     @last_played = Coordinate.new(coordinate.row, coordinate.column)
 
     @on_change.fire
-    @player_turn++
+    @player_turn += 1
     if @player_turn > @players
       @player_turn = 1
     end
@@ -89,10 +89,10 @@ class GameState
   # Get the highest row that contains a token in the supplied column
   def height(column)
     result = 0
-
+    column = column.to_i
     for i in 0..@rows - 1
-      if @board[[i, column]].nil?
-        result = i
+      unless @board[[i, column]].nil?
+        result = i+1
       end
     end
 
@@ -185,7 +185,7 @@ class GameState
   method_contract(
       #preconditions
       [lambda { |obj, column| column.respond_to?(:to_i) },
-       lambda { |obj, column| column < obj.columns && column >= 0 }],
+       lambda { |obj, column| column.to_i < obj.columns && column.to_i >= 0 }],
       #postconditions
       [])
 

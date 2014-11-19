@@ -21,7 +21,7 @@ class Connect4Checker
 
   def check_win(game_state)
     last_token = game_state.get_token(game_state.last_played)
-    return last_token.value == @value ||
+    return last_token.value == @value &&
         four_in_row(game_state.row(game_state.last_played.row)) ||
         four_in_row(game_state.column(game_state.last_played.column)) ||
         four_in_row(game_state.left_diagonal(game_state.last_played)) ||

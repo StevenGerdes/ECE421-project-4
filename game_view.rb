@@ -3,7 +3,7 @@ require './game_main'
 
 class GameView
 
-  def initialize#(game, game_state)
+  def initialize(game)
       Gtk.init
 
       @builder = Gtk::Builder::new
