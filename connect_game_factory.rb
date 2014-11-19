@@ -58,7 +58,7 @@ class ConnectGameFactory
       [lambda { |obj, result, player_num| result.respond_to?(:get_token) }])
 
   def player_token_generator(player_num)
-    @game_mode[@mode][player_num - 1].token_generator
+    @game_mode[@mode][player_num.to_i - 1].token_generator
   end
 
   method_contract(
@@ -70,7 +70,7 @@ class ConnectGameFactory
       [lambda { |obj, result, player_num| result.respond_to?(:check_win) }])
 
   def player_win_condition_checker(player_num)
-    @game_mode[@mode][player_num - 1].win_condition
+    @game_mode[@mode][player_num.to_i - 1].win_condition
   end
 
   def player_win_condition_checkers

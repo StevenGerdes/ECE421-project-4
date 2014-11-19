@@ -104,6 +104,7 @@ class GameState
     @player_turn = 1
     @board = Hash.new(nil)
     @last_played = Coordinate.new(0,0)
+    @on_change.fire
   end
 
   #prints out game board as a string
@@ -191,13 +192,13 @@ class GameState
 
   #checks if a column is full
   def column_full?(column)
-    if @board[[@rows - 1][column.to_i]] != nil
+    unless column(column.to_i)[@rows - 1].nil?
       return true
     end
     return false
   end
 
-  #checks if a board is ful
+  #checks if a board is full
   def is_full?
     for i in 0..@rows - 1
       unless column_full?(i)
