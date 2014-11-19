@@ -19,7 +19,7 @@ class CommandView
 
       opts.on('-p number,row,column', '--play number,row,column', Array, 'Play token for player at coordinates') do |arg_list|
         if arg_list.length == 1
-          @game_main.play(@game_factory.player_token_generator(@game_state.player_turn).get_token,arg_list[0])
+          @game_main.play(arg_list[0])
         else
           @game_state.play(@game_factory.player_token_generator(arg_list[0]).get_token, Coordinate.new(arg_list[1], arg_list[2]))
         end
