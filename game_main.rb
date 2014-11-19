@@ -6,18 +6,18 @@ require './command_view'
 class GameMain
 
   attr_accessor :on_win, :on_quit
+  attr_reader :game_state
 
-  def initialize
+  def initialize(ui_on)
     @on_win = SimpleEvent.new
     @on_quit = SimpleEvent.new
+
+    StartView.new(self) if ui_on
   end
 
-  def start
-
-    players = 2
-    connect_game_factory = ConnectGameFactory.new(players, :connect4)
-    win_checkers = connect_game_factory.player_win_condition_checkers
-    game_state = GameState.new(players, 6, 7)
+  def start_game(game_factory)
+    win_checkers = game_factory.player_win_condition_checkers
+    @game_state = game_factory.game_state
 
     @on_win.listen{ game_state.reset }
 
@@ -29,8 +29,13 @@ class GameMain
       }
     }
 
-    command_view = CommandView.new(connect_game_factory, self, game_state)
-    command_view.start
+    Thread.new{ CommandView.new(game_factory, self, game_state)} if $DEBUG
+  end
+
+  def play(token, column)
+    unless @game_state.column_full(column)
+      @game_state.play(token, @game_state.height, column)
+    end
   end
 
 end
