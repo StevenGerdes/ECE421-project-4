@@ -8,18 +8,17 @@ class Opponent
 
   method_contract(
       #preconditions
-      [lambda { |obj, game_main, game_state, token_generator| token_generator.respond_to?(:get_token)},
-       lambda { |obj, game_main, game_state| game_main.respond_to?(:play)},
+      [lambda { |obj, game_main, game_state| game_main.respond_to?(:play)},
        lambda { |obj, game_main, game_state| game_state.respond_to?(:on_turn_change)},
        lambda { |obj, game_main, game_state| game_state.respond_to?(:player_turn)}],
       #postconditions
       [])
 
-  def initialize(game_main, game_state, token_generator)
+  def initialize(game_main, game_state)
     @game_state = game_state
     game_state.on_turn_change.listen{
       if game_state.player_turn == 2
-        game_main.play(token_generator.get_token, self.play)
+        game_main.play(self.play)
       end
     }
   end
