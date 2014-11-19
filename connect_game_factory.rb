@@ -29,7 +29,7 @@ class ConnectGameFactory
         PlayerGameMode.new(TokenGenerator.new('0000FF', 'b'), Connect4Checker.new('b')),
     ]
 
-    game_state.on_change.listen {
+    connect_game.on_play.listen {
       player_win_condition_checkers.each_with_index { |checker, index|
         if checker.check_win(game_state)
           connect_game.on_win.fire(index)
