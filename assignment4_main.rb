@@ -1,6 +1,6 @@
 #Setting debug to true will set it in debug code. One of the things that happens
 #is a debug console will run
-$DEBUG = true
+$DEBUG = false
 require './game_main'
 game = GameMain.new()
 

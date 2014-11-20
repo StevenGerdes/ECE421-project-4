@@ -23,7 +23,7 @@ class ConnectGameFactory
     @game_mode = Hash.new
     @game_mode[:connect4] = [
         PlayerGameMode.new(TokenGenerator.new('FF0000', 'r'), Connect4Checker.new('r')),
-        PlayerGameMode.new(TokenGenerator.new('0000FF', 'g'), Connect4Checker.new('b')),
+        PlayerGameMode.new(TokenGenerator.new('0000FF', 'g'), Connect4Checker.new('g')),
     ]
     @game_mode[:otto_toot] = [
         PlayerGameMode.new(TokenGenerator.new('FF0000', 'o'), PatternChecker.new(['o','t','t','o'])),

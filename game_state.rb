@@ -64,6 +64,7 @@ class GameState
     if @player_turn > @players
       @player_turn = 1
     end
+	@on_change.fire
     @on_turn_change.fire
   end
 
