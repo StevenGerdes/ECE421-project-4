@@ -34,7 +34,7 @@ class Connect4Checker
       [lambda { |obj, array| array.respond_to?(:each) },
        lambda { |obj, array| array.size == 0 || array[0].respond_to?(:value) }],
       #postconditions
-      [lambda { |obj, result| result.is_a?(TrueClass) || result.is_a?(FalseClass) }])
+      [lambda { |obj, result, array| result.is_a?(TrueClass) || result.is_a?(FalseClass) }])
   #checks if there are four tokens in a row with the same value as itself
   def four_in_row(array)
     num_in_row = 0
