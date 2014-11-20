@@ -21,10 +21,10 @@ class ConnectGame
        lambda { |obj, title, game_state, players| game_state.respond_to?(:reset) },
        lambda { |obj, title, game_state, players| game_state.respond_to?(:change_turn) },
        lambda { |obj, title, game_state, players| players.respond_to?(:each) },
-       lambda { |obj, title, game_state, players| players.respond_to?(:size) },
-       lambda { |obj, title, game_state, players| players.size == game_state.players },
-       lambda { |obj, title, game_state, players| players.size == 0 || players[0].respond_to?(:token_generator) },
-       lambda { |obj, title, game_state, players| players.size == 0 || players[0].respond_to?(:win_condition) }],
+       lambda { |obj, title, game_state, players| players.respond_to?(:count) },
+       lambda { |obj, title, game_state, players| players.count == game_state.players },
+       lambda { |obj, title, game_state, players| players.count == 0 || players[0].respond_to?(:token_generator) },
+       lambda { |obj, title, game_state, players| players.count == 0 || players[0].respond_to?(:win_condition) }],
       #postconditions
       [])
   #initializes the connect game
