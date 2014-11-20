@@ -1,5 +1,5 @@
 #if debug is true the game will be run via a debug console. If it is false it will run the UI
-$DEBUG = true
+$DEBUG = false
 require './game_main'
 game = GameMain.new()
 
