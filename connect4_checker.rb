@@ -31,8 +31,7 @@ class Connect4Checker
 
   method_contract(
       #preconditions
-      [lambda { |obj, array| array.respond_to?(:each) },
-       lambda { |obj, array| array.count == 0 || array[0].respond_to?(:value) }],
+      [lambda { |obj, array| array.respond_to?(:each) }],
       #postconditions
       [lambda { |obj, result, array| result.is_a?(TrueClass) || result.is_a?(FalseClass) }])
   #checks if there are four tokens in a row with the same value as itself
