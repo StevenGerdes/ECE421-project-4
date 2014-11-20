@@ -6,7 +6,7 @@ class TokenGenerator
 
   class_invariant([])
 
-  def initialize( color, value )
+  def initialize(color, value)
     @color = color
     @value = value
   end
@@ -19,6 +19,7 @@ class TokenGenerator
        lambda { |obj, result| result.respond_to?(:selected) },
        lambda { |obj, result| result.respond_to?(:value) }])
 
+  #returns a newly generated token
   def get_token
     return Token.new(@value, @color)
   end
