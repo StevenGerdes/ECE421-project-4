@@ -13,8 +13,8 @@ class ConnectGame
   method_contract(
       #preconditions
       [lambda { |obj, title, game_state, players| title.respond_to?(:to_s) },
-       lambda { |obj, title, game_state, players| game_state.respond_to?(:to_height) },
-       lambda { |obj, title, game_state, players| game_state.respond_to?(:to_play) },
+       lambda { |obj, title, game_state, players| game_state.respond_to?(:height) },
+       lambda { |obj, title, game_state, players| game_state.respond_to?(:play) },
        lambda { |obj, title, game_state, players| game_state.respond_to?(:column_full?) },
        lambda { |obj, title, game_state, players| game_state.respond_to?(:player_turn) },
        lambda { |obj, title, game_state, players| game_state.respond_to?(:players) },
@@ -23,7 +23,7 @@ class ConnectGame
        lambda { |obj, title, game_state, players| players.respond_to?(:each) },
        lambda { |obj, title, game_state, players| players.respond_to?(:size) },
        lambda { |obj, title, game_state, players| players.size == game_state.players },
-       lambda { |obj, title, game_state, players| players.size == 0 || players[0].respond_to?(:token_gnerator) },
+       lambda { |obj, title, game_state, players| players.size == 0 || players[0].respond_to?(:token_generator) },
        lambda { |obj, title, game_state, players| players.size == 0 || players[0].respond_to?(:win_condition) }],
       #postconditions
       [])

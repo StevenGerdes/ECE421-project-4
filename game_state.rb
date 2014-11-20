@@ -4,7 +4,8 @@ class GameState
   include Contract
   attr_reader :rows, :columns, :last_played, :player_turn, :on_change, :board, :players, :on_turn_change
 
-  class_invariant([lambda { |obj| obj.rows > 0 },
+  class_invariant([
+                      lambda { |obj| obj.rows > 0 },
                    lambda { |obj| obj.columns > 0 },
                    lambda { |obj| obj.players > 1 }])
 
@@ -142,7 +143,7 @@ class GameState
   method_contract(
       #preconditions
       [lambda { |obj, i| i.respond_to?(:to_i) },
-       lambda { |obj, i| i.to_i > 0 },
+       lambda { |obj, i| i.to_i >= 0 },
        lambda { |obj, i| i.to_i <obj.columns }],
       #postconditions
       [lambda { |obj, result, i| result.is_a?(Array) }])
@@ -262,8 +263,8 @@ class Coordinate
   include Contract
   attr_reader :row, :column
 
-  class_invariant([lambda { |obj| obj.row > 0 },
-                   lambda { |obj| obj.column > 0 }])
+  class_invariant([lambda { |obj| obj.row >= 0 },
+                   lambda { |obj| obj.column >= 0 }])
 
   method_contract(
       #preconditions

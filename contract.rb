@@ -41,7 +41,7 @@ module Contract
 
         preconditions.each_with_index { |block, index|
           unless block.call(self, *args)
-            puts "precondition #{index} violated for method #{method}"
+            puts "precondition #{index} violated for method #{method} in #{self.class}"
             raise PreconditionError
           end
         }
@@ -50,14 +50,14 @@ module Contract
 
         postconditions.each_with_index { |block, index|
           unless block.call(self, result, *args)
-            puts "postcondition #{index} violated for method #{method}"
+            puts "postcondition #{index} violated for method #{method} in #{self.class}"
             raise PostconditionError
           end
         }
 
         invariants.each_with_index { |block, index|
           unless block.call(self)
-            puts "class invariant #{index} violated after method #{method}"
+            puts "class invariant #{index} violated after method #{method} in #{self.class}"
             raise InvariantError
           end
         }
