@@ -9,6 +9,7 @@ unless $DEBUG
 end
 
 class GameMain
+  include Contract
 
   class_invariant([])
   #if it isn't debug this starts the game launcher
