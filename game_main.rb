@@ -9,10 +9,12 @@ end
 
 class GameMain
 
-  def initialize()
+  #if it isn't debug this starts the game launcher
+  def initialize
     StartView.new(self) unless $DEBUG
   end
 
+  #
   def start_game(players, type)
     game_factory = ConnectGameFactory.new(players, type)
 

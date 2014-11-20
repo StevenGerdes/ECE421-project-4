@@ -1,4 +1,5 @@
 require 'optparse'
+#this doesn't have contracts because it isn't production code but used for debug
 class CommandView
 
 
@@ -41,13 +42,15 @@ class CommandView
     start
   end
 
+  #this simply runs a console which allows for simple commands to be send to the game
   def start
     while @running
       print '>'
       input = gets
       begin
-        @cmd_parser.parse(input)
+        @cmd_parser.parse(input.strip)
       rescue OptionParser::InvalidOption
+        puts 'invalid option'
       end
     end
   end
