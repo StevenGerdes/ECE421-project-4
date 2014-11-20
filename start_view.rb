@@ -35,4 +35,3 @@ class StartView
     Gtk.main()
   end
 end
-

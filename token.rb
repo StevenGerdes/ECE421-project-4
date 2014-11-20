@@ -11,8 +11,8 @@ class Token
   method_contract(
       #preconditions
       [lambda { |obj, value, color| value.respond_to?(:to_s) },
-      lambda { |obj, value, color| color.to_s.length == 6},
-      lambda { |obj, value, color| !color[/\H/]}],
+       lambda { |obj, value, color| color.to_s.length == 6 },
+       lambda { |obj, value, color| !color[/\H/] }],
       #postconditions
       [])
 
@@ -24,6 +24,4 @@ class Token
   def to_s
     @value.to_s
   end
-
 end
-

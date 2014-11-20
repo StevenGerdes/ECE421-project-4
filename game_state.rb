@@ -31,11 +31,12 @@ class GameState
 
   method_contract(
       #preconditions
-      [lambda { |obj, coordinate| coordinate.is_a?(Coordinate) },
+      [lambda { |obj, coordinate| coordinate.respond_to?(:row) },
+       lambda { |obj, coordinate| coordinate.respond_to?(:column) },
        lambda { |obj, coordinate| coordinate.row < obj.rows },
-       lambda { |obj, coordinate| coordinate.column < obj.columns}],
+       lambda { |obj, coordinate| coordinate.column < obj.columns }],
       #postconditions
-      [lambda { |obj, result, coordiante| result.nil? || result.is_a?(Token)}])
+      [lambda { |obj, result, coordiante| result.nil? || result.is_a?(Token) }])
 
   #Returns token at coordinate
   def get_token(coordinate)
@@ -44,7 +45,8 @@ class GameState
 
   method_contract(
       #preconditions
-      [lambda { |obj, token, coordinate| coordinate.is_a? Coordinate },
+      [lambda { |obj, token, coordinate| coordinate.respond_to?(:row) },
+       lambda { |obj, token, coordinate| coordinate.respond_to?(:column) },
        lambda { |obj, token, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
        lambda { |obj, token, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 },
        lambda { |obj, token, coordinate| token.is_a?(Token) },
@@ -64,14 +66,18 @@ class GameState
     if @player_turn > @players
       @player_turn = 1
     end
+    @on_change.fire
     @on_turn_change.fire
   end
 
   method_contract(
       #preconditions
-      [lambda { |obj, coordinate| coordinate.is_a? Coordinate },
-       lambda { |obj, coordinate| coordinate.row < obj.rows && coordinate.row >= 0 },
-       lambda { |obj, coordinate| coordinate.column < obj.columns && coordinate.column >= 0 }],
+      [lambda { |obj, coordinate| coordinate.respond_to?(:row) },
+       lambda { |obj, coordinate| coordinate.respond_to?(:column) },
+       lambda { |obj, coordinate| coordinate.row < obj.rows },
+       lambda { |obj, coordinate| coordinate.row >= 0 },
+       lambda { |obj, coordinate| coordinate.column < obj.columns },
+       lambda { |obj, coordinate| coordinate.column >= 0 }],
       #postconditions
       [lambda { |obj, result, coordinate| @board[[coordinate.row, coordinate.column]] == nil }])
 
@@ -83,7 +89,9 @@ class GameState
 
   method_contract(
       #preconditions
-      [],
+      [lambda { |obj, column| column.respond_to?(:to_i)},
+       lambda { |obj, column| column.to_i >= 0 },
+       lambda { |obj, column| column.to_i <=obj.rows }],
       #postconditions
       [lambda { |obj, result, column| result <= obj.rows },
        lambda { |obj, result, column| result >= 0 }])
@@ -105,7 +113,7 @@ class GameState
   def reset
     @player_turn = 1
     @board = Hash.new(nil)
-    @last_played = Coordinate.new(0,0)
+    @last_played = Coordinate.new(0, 0)
     @on_change.fire
   end
 
@@ -116,7 +124,7 @@ class GameState
         "Players turn: #{@player_turn.to_s}\n" +
         "Last Played: #{@last_played.to_s}\n"
 
-    (@rows - 1).downto(0){ |i|
+    (@rows - 1).downto(0) { |i|
       row_matrix = row i
       for j in 0..@columns - 1
         if row_matrix[j].nil?
@@ -131,15 +139,42 @@ class GameState
     return result
   end
 
+  method_contract(
+      #preconditions
+      [lambda { |obj, i| i.respond_to?(:to_i) },
+       lambda { |obj, i| i.to_i > 0 },
+       lambda { |obj, i| i.to_i <obj.columns }],
+      #postconditions
+      [lambda { |obj, result, i| result.is_a?(Array) }])
+
   #returns the ith row
   def row(i)
     [i].product((0..@columns - 1).to_a).collect { |index| @board[index] }
   end
 
+  method_contract(
+      #preconditions
+      [lambda { |obj, i| i.respond_to?(:to_i) },
+       lambda { |obj, i| i.to_i >= 0 },
+       lambda { |obj, i| i.to_i <obj.columns }],
+      #postconditions
+      [lambda { |obj, result, i| result.is_a?(Array) }])
+
   #returns the ith column
   def column(i)
     (0..@rows - 1).to_a.product([i]).collect { |index| @board[index] }
   end
+
+  method_contract(
+      #preconditions
+      [lambda { |obj, coordinate| coordinate.respond_to?(:row) },
+       lambda { |obj, coordinate| coordinate.respond_to?(:column) },
+       lambda { |obj, coordinate| coordinate.row < obj.rows },
+       lambda { |obj, coordinate| coordinate.row >= 0 },
+       lambda { |obj, coordinate| coordinate.column < obj.columns },
+       lambda { |obj, coordinate| coordinate.column >= 0 }],
+      #postconditions
+      [lambda { |obj, result, coordinate| result.is_a?(Array) }])
 
   #returns the right diagonal of the desired coordinate
   def right_diagonal(coordinate)
@@ -162,6 +197,17 @@ class GameState
 
     return result
   end
+
+  method_contract(
+      #preconditions
+      [lambda { |obj, coordinate| coordinate.respond_to?(:row) },
+       lambda { |obj, coordinate| coordinate.respond_to?(:column) },
+       lambda { |obj, coordinate| coordinate.row < obj.rows },
+       lambda { |obj, coordinate| coordinate.row >= 0 },
+       lambda { |obj, coordinate| coordinate.column < obj.columns },
+       lambda { |obj, coordinate| coordinate.column >= 0 }],
+      #postconditions
+      [lambda { |obj, result, coordinate| result.is_a?(Array) }])
 
   #returns the left diagonal of the desired coordinates
   def left_diagonal(coordinate)
@@ -216,11 +262,12 @@ class Coordinate
   include Contract
   attr_reader :row, :column
 
-  class_invariant([])
+  class_invariant([lambda { |obj| obj.row > 0 },
+                   lambda { |obj| obj.column > 0 }])
 
   method_contract(
       #preconditions
-      [lambda { |obj, row, column| row.respond_to?( :to_i) && row.to_i >= 0 },
+      [lambda { |obj, row, column| row.respond_to?(:to_i) && row.to_i >= 0 },
        lambda { |obj, row, column| column.respond_to?(:to_i) && column.to_i >= 0 }],
       #postconditions
       [])
@@ -231,6 +278,6 @@ class Coordinate
   end
 
   def to_s
-    "#{@row.to_s}, #{@column.to_s}"
+    "(#{@row.to_s}, #{@column.to_s})"
   end
 end
